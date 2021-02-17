@@ -2,11 +2,10 @@ import numpy as np
 import xlrd
 
 # load doc
-doc = xlrd.open_workbook('./student-mat.xlsx').sheet_by_index(0)
+doc = xlrd.open_workbook('./student-mat.xls').sheet_by_index(0)
 
 # Extract attribute names
 attributeNames = doc.row_values(rowx=0, start_colx=0, end_colx=8)
-
 
 # Setting up columns of data
 sex = doc.col_values(1,1,396) # Converted: M == 0, F == 1
@@ -17,9 +16,9 @@ study = doc.col_values(5,1,396)
 absence = doc.col_values(6,1,396)
 g3 = doc.col_values(7,1,396)
 maxEdu = []
+
 for i in range(len(Medu)):
     maxEdu.append(max(Medu[i],Fedu[i]))
-
 
 yrow = maxEdu   # what column is used for grouping
 classNames = sorted(set(yrow))
