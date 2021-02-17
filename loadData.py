@@ -16,7 +16,9 @@ Fedu = doc.col_values(4,1,396)
 study = doc.col_values(5,1,396)
 absence = doc.col_values(6,1,396)
 g3 = doc.col_values(7,1,396)
-maxEdu = doc.col_values(8,1,396) # Generated (max(Medu,Fedu))
+maxEdu = []
+for i in range(len(Medu)):
+    maxEdu.append(max(Medu[i],Fedu[i]))
 
 
 yrow = maxEdu   # what column is used for grouping
@@ -27,8 +29,8 @@ classDict = dict(zip(classNames,range(len(classNames))))
 y = np.array([classDict[value] for value in yrow])
 
 # Preallocate memory, then extract data to matrix X
-X = np.empty((395,7))
-for i in range(7):
+X = np.empty((395,8))
+for i in range(8):
     X[:,i] = np.array(doc.col_values(i,1,396)).T
 
 # Compute values of N, M and C.
