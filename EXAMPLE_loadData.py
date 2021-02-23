@@ -2,4 +2,6 @@
     
 from loadData import *
 
+
+
 print(X)

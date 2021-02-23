@@ -7,6 +7,9 @@ doc = xlrd.open_workbook('./student-mat.xls').sheet_by_index(0)
 # Extract attribute names
 attributeNames = doc.row_values(rowx=0, start_colx=0, end_colx=8)
 
+# int to chosing what column is the y and the grouping of the dataset
+col = 7
+
 # Setting up columns of data
 sex = doc.col_values(1,1,396) # Converted: M == 0, F == 1
 Age = doc.col_values(2,1,396) 
@@ -20,7 +23,8 @@ maxEdu = []
 for i in range(len(Medu)):
     maxEdu.append(max(Medu[i],Fedu[i]))
 
-yrow = maxEdu   # what column is used for grouping
+collected = [sex, Age, Medu, Fedu, study, absence, g3, maxEdu]
+yrow = collected[col]   # what column is used for grouping
 classNames = sorted(set(yrow))
 classDict = dict(zip(classNames,range(len(classNames))))
 
