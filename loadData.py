@@ -11,16 +11,14 @@ attributeNames = doc.row_values(rowx=0, start_colx=0, end_colx=8)
 col = 7
 
 # Setting up columns of data
-sex = doc.col_values(1,1,396) # Converted: M == 0, F == 1
-Age = doc.col_values(2,1,396) 
-Medu = doc.col_values(3,1,396) 
-Fedu = doc.col_values(4,1,396)
-study = doc.col_values(5,1,396)
-absence = doc.col_values(6,1,396)
-g3 = doc.col_values(7,1,396)
-maxEdu = []
-for i in range(len(Medu)):
-    maxEdu.append(max(Medu[i],Fedu[i]))
+sex = doc.col_values(0,1,396) # Converted: M == 0, F == 1
+Age = doc.col_values(1,1,396) 
+Medu = doc.col_values(2,1,396) 
+Fedu = doc.col_values(3,1,396)
+study = doc.col_values(4,1,396)
+absence = doc.col_values(5,1,396)
+g3 = doc.col_values(6,1,396)
+maxEdu = doc.col_values(7,1,396)
 
 collected = [sex, Age, Medu, Fedu, study, absence, g3, maxEdu]
 yrow = collected[col]   # what column is used for grouping
