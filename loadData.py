@@ -5,22 +5,21 @@ import xlrd
 doc = xlrd.open_workbook('./student-mat.xlsx').sheet_by_index(0)
 
 # Extract attribute names
-attributeNames = doc.row_values(rowx=0, start_colx=0, end_colx=8)
+attributeNames = doc.row_values(rowx=0, start_colx=0, end_colx=7)
 
 # int to chosing what column is the y and the grouping of the dataset
-col = 7
+col = 5
 
 # Setting up columns of data
-sex = doc.col_values(0,1,396) # Converted: M == 0, F == 1
-Age = doc.col_values(1,1,396) 
-Medu = doc.col_values(2,1,396) 
-Fedu = doc.col_values(3,1,396)
-study = doc.col_values(4,1,396)
-absence = doc.col_values(5,1,396)
-g3 = doc.col_values(6,1,396)
-maxEdu = doc.col_values(7,1,396)
+Female = doc.col_values(0,1,396) # Converted: M == 0, F == 1
+Male = doc.col_values(1,1,396) 
+Age = doc.col_values(2,1,396) 
+study = doc.col_values(3,1,396)
+absence = doc.col_values(4,1,396)
+g3 = doc.col_values(5,1,396)
+maxEdu = doc.col_values(6,1,396)
 
-collected = [sex, Age, Medu, Fedu, study, absence, g3, maxEdu]
+collected = [Female, Male, Age, study, absence, g3, maxEdu]
 yrow = collected[col]   # what column is used for grouping
 classNames = sorted(set(yrow))
 classDict = dict(zip(classNames,range(len(classNames))))
@@ -29,8 +28,8 @@ classDict = dict(zip(classNames,range(len(classNames))))
 y = np.array([classDict[value] for value in yrow])
 
 # Preallocate memory, then extract data to matrix X
-X = np.empty((395,8))
-for i in range(8):
+X = np.empty((395,7))
+for i in range(7):
     X[:,i] = np.array(doc.col_values(i,1,396)).T
 
 # Compute values of N, M and C.

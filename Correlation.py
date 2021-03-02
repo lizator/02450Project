@@ -46,9 +46,9 @@ for c in range(C):
     collected_mask = []
     for boo in class_mask:
         collected_mask.append(True)
-    plot(np.array(Xcopy[class_mask,7]), np.array(Xcopy[class_mask,6]), '.')
+    plot(np.array(Xcopy[class_mask,6]), np.array(Xcopy[class_mask,5]), '.')
 
 ylabel("G3")
-xlabel("maxEdu, Correlation: %.4f" % np.corrcoef(np.array(X[collected_mask,7]), np.array(X[collected_mask,6]))[0,1])
+xlabel("maxEdu, Correlation: %.4f" % np.corrcoef(np.array(X[collected_mask,6]), np.array(X[collected_mask,5]))[0,1])
 legend(classNames)
 show()
