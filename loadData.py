@@ -19,7 +19,18 @@ absence = doc.col_values(4,1,396)
 g3 = doc.col_values(5,1,396)
 maxEdu = doc.col_values(6,1,396)
 
-collected = [Female, Male, Age, study, absence, g3, maxEdu]
+lg3=[]
+for index in g3:
+    if index <7:
+        lg3.append(0)
+    elif index < 12:
+        lg3.append(1)
+    elif index < 18:
+        lg3.append(2)
+    else:
+        lg3.append(3)
+
+collected = [Female, Male, Age, study, absence, lg3, maxEdu]
 yrow = collected[col]   # what column is used for grouping
 classNames = sorted(set(yrow))
 classDict = dict(zip(classNames,range(len(classNames))))
@@ -31,6 +42,17 @@ y = np.array([classDict[value] for value in yrow])
 X = np.empty((395,7))
 for i in range(7):
     X[:,i] = np.array(doc.col_values(i,1,396)).T
+
+for row in X:
+    if row[col] <7:
+        row[col] = 0
+    elif row[col] < 12:
+        row[col] = 1
+    elif row[col] < 18:
+        row[col] = 2
+    else:
+        row[col] = 3
+    
 
 # Compute values of N, M and C.
 N = len(y)
