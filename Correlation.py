@@ -1,7 +1,7 @@
 # used from Exercise 4.2.5
 
 from matplotlib.pyplot import (figure, subplot, plot, xlabel, ylabel, 
-                               xticks, yticks,legend,show)
+                               xticks, yticks,legend,show, savefig)
 
 import numpy as np
 import copy
@@ -38,7 +38,7 @@ for m1 in range(M):
             #ylim(0,X.max()*1.1)
             #xlim(0,X.max()*1.1)
 legend(classNames)
-
+savefig("CorrelationAll.png")
 show()
 
 for c in range(C):
@@ -51,4 +51,5 @@ for c in range(C):
 ylabel("G3")
 xlabel("maxEdu, Correlation: %.4f" % np.corrcoef(np.array(X[collected_mask,6]), np.array(X[collected_mask,5]))[0,1])
 legend(classNames)
+savefig("maxEdu,AbsenceForG3.png")
 show()
