@@ -14,6 +14,7 @@ from matplotlib.pyplot import figure, plot, title, xlabel, ylabel, show, legend
 from scipy.linalg import svd
 from scipy.stats import zscore
 
+#remove G3 start
 X2 = np.empty((357,6))
 for r in range(len(X)):
     X2[r] = np.hstack((X[r][:5], X[r][6:]))
@@ -21,6 +22,8 @@ for r in range(len(X)):
 X = X2
 
 attributeNames = attributeNames[:5] + attributeNames[6:]
+
+#Remove G3 end
 
 # Subtract mean value from data
 Y = X - np.ones((N,1))*X.mean(axis=0)
@@ -69,37 +72,6 @@ ylabel('PC{0}'.format(j+1))
 # Output result to screen
 show()
 
-Y = X - np.ones((N,1))*X.mean(axis=0)
-Y = Y*(1/np.std(Y,0))
-# PCA by computing SVD of Y
-U,S,V = svd(Y,full_matrices=False)
-
-# Compute variance explained by principal components
-rho = (S*S) / (S*S).sum() 
-
-
-V = V.T    
-
-# Project the centered data onto principal component space
-Z = Y @ V
-# Indices of the principal components to be plotted
-i = 0
-j = 1
-
-# Plot PCA of the data
-f = figure()
-title('NanoNose data: PCA')
-#Z = array(Z)
-for c in range(C):
-    # select indices belonging to class c:
-    class_mask = y==c
-    plot(Z[class_mask,i], Z[class_mask,j], 'o', alpha=.5)
-legend(classNames)
-xlabel('PC{0}'.format(i+1))
-ylabel('PC{0}'.format(j+1))
-
-# Output result to screen
-show()
 print('Ran Exercise 2.1.4')
 
 # exercise 2.2.4
