@@ -12,6 +12,7 @@ from loadData import *
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import figure, plot, title, xlabel, ylabel, show, legend
 from scipy.linalg import svd
+from scipy.stats import zscore
 
 
 # Subtract mean value from data
@@ -23,7 +24,7 @@ U,S,V = svd(Y,full_matrices=False)
 # Compute variance explained by principal components
 rho = (S*S) / (S*S).sum() 
 
-threshold = 0.95
+threshold = 0.90
 
 # Plot variance explained
 plt.figure()
@@ -42,7 +43,6 @@ V = V.T
 
 # Project the centered data onto principal component space
 Z = Y @ V
-
 # Indices of the principal components to be plotted
 i = 0
 j = 1
@@ -65,27 +65,65 @@ show()
 print('Ran Exercise 2.1.4')
 
 # exercise 2.2.4
+# Subtract the mean from the data and divide by the attribute standard
+# deviation to obtain a standardized dataset:
+Y = X - np.ones((N, 1))*X.mean(0)
+Y = Y*(1/np.std(Y,0))
+# Here were utilizing the broadcasting of a row vector to fit the dimensions 
+# of Y2
 
-Y = X - np.ones((N,1))*X.mean(0)
+# Store the two in a cell, so we can just loop over them:
+
+#Y = X - np.ones((N,1))*X.mean(0)
+
 U,S,Vh = svd(Y,full_matrices=False)
 V=Vh.T
 N,M = X.shape
 
 # We saw in 2.1.3 that the first 3 components explaiend more than 90
 # percent of the variance. Let's look at their coefficients:
-pcs = [0,1,2]
+pcs = [0,1,2,3,4]
 legendStrs = ['PC'+str(e+1) for e in pcs]
 c = ['r','g','b']
 bw = .2
 r = np.arange(1,M+1)
 for i in pcs:    
     plt.bar(r+i*bw, V[:,i], width=bw)
-plt.xticks(r+bw, attributeNames)
+plt.xticks(r+bw, attributeNames, rotation = 45)
 plt.xlabel('Attributes')
 plt.ylabel('Component coefficients')
 plt.legend(legendStrs)
 plt.grid()
-plt.title('NanoNose: PCA Component Coefficients')
+plt.title('Zero-mean\nPCA Component Coefficients')
+plt.show()
+
+Y = X - np.ones((N, 1))*X.mean(0)
+# Here were utilizing the broadcasting of a row vector to fit the dimensions 
+# of Y2
+
+# Store the two in a cell, so we can just loop over them:
+
+#Y = X - np.ones((N,1))*X.mean(0)
+
+U,S,Vh = svd(Y,full_matrices=False)
+V=Vh.T
+N,M = X.shape
+
+# We saw in 2.1.3 that the first 3 components explaiend more than 90
+# percent of the variance. Let's look at their coefficients:
+pcs = [0,1]
+legendStrs = ['PC'+str(e+1) for e in pcs]
+c = ['r','g','b']
+bw = .2
+r = np.arange(1,M+1)
+for i in pcs:    
+    plt.bar(r+i*bw, V[:,i], width=bw)
+plt.xticks(r+bw, attributeNames, rotation = 45)
+plt.xlabel('Attributes')
+plt.ylabel('Component coefficients')
+plt.legend(legendStrs)
+plt.grid()
+plt.title('Zero-mean and unit variance\nPCA Component Coefficients')
 plt.show()
 
 # Inspecting the plot, we see that the 2nd principal component has large
@@ -119,7 +157,7 @@ all_water_data = Y[y==4,:]
 ## exercise 2.1.6
 r = np.arange(1,X.shape[1]+1)
 plt.bar(r, np.std(X,0))
-plt.xticks(r, attributeNames)
+plt.xticks(r, attributeNames, rotation = 45)
 plt.ylabel('Standard deviation')
 plt.xlabel('Attributes')
 plt.title('NanoNose: attribute standard deviations')
@@ -170,17 +208,6 @@ for k in range(2):
     
     # Compute the projection onto the principal components
     Z = U*S;
-    
-    # Plot projection
-    plt.subplot(nrows, ncols, 1+k)
-    C = len(classNames)
-    for c in range(C):
-        plt.plot(Z[y==c,i], Z[y==c,j], '.', alpha=.5)
-    plt.xlabel('PC'+str(i+1))
-    plt.xlabel('PC'+str(j+1))
-    plt.title(titles[k] + '\n' + 'Projection' )
-    plt.legend(classNames)
-    plt.axis('equal')
     
     # Plot attribute coefficients in principal component space
     plt.subplot(nrows, ncols,  3+k)
