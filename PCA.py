@@ -15,6 +15,17 @@ from scipy.linalg import svd
 from scipy.stats import zscore
 
 
+#remove G3 start
+X2 = np.empty((357,6))
+for r in range(len(X)):
+    X2[r] = np.hstack((X[r][:5], X[r][6:]))
+
+X = X2
+
+attributeNames = attributeNames[:5] + attributeNames[6:]
+
+#Remove G3 end
+
 # Subtract mean value from data
 Y = X - np.ones((N,1))*X.mean(axis=0)
 
