@@ -94,7 +94,7 @@ plt.xlabel('Attributes')
 plt.ylabel('Component coefficients')
 plt.legend(legendStrs)
 plt.grid()
-plt.title('Zero-mean\nPCA Component Coefficients')
+plt.title('Zero-mean and unit variance\nPCA Component Coefficients')
 plt.show()
 
 Y = X - np.ones((N, 1))*X.mean(0)
@@ -123,7 +123,7 @@ plt.xlabel('Attributes')
 plt.ylabel('Component coefficients')
 plt.legend(legendStrs)
 plt.grid()
-plt.title('Zero-mean and unit variance\nPCA Component Coefficients')
+plt.title('Zero-mean\nPCA Component Coefficients')
 plt.show()
 
 # Inspecting the plot, we see that the 2nd principal component has large
