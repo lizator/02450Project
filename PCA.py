@@ -16,7 +16,7 @@ from scipy.stats import zscore
 
 
 #remove G3 start
-X2 = np.empty((357,6))
+X2 = np.empty((395,6))
 for r in range(len(X)):
     X2[r] = np.hstack((X[r][:5], X[r][6:]))
 
