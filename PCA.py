@@ -12,6 +12,7 @@ from loadData import *
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import figure, plot, title, xlabel, ylabel, show, legend
 from scipy.linalg import svd
+from scipy.stats import zscore
 
 
 # Subtract mean value from data
@@ -42,7 +43,6 @@ V = V.T
 
 # Project the centered data onto principal component space
 Z = Y @ V
-
 # Indices of the principal components to be plotted
 i = 0
 j = 1
@@ -65,22 +65,31 @@ show()
 print('Ran Exercise 2.1.4')
 
 # exercise 2.2.4
+# Subtract the mean from the data and divide by the attribute standard
+# deviation to obtain a standardized dataset:
+Y = X - np.ones((N, 1))*X.mean(0)
+Y = Y*(1/np.std(Y,0))
+# Here were utilizing the broadcasting of a row vector to fit the dimensions 
+# of Y2
 
-Y = X - np.ones((N,1))*X.mean(0)
+# Store the two in a cell, so we can just loop over them:
+
+#Y = X - np.ones((N,1))*X.mean(0)
+
 U,S,Vh = svd(Y,full_matrices=False)
 V=Vh.T
 N,M = X.shape
 
 # We saw in 2.1.3 that the first 3 components explaiend more than 90
 # percent of the variance. Let's look at their coefficients:
-pcs = [0,1,2]
+pcs = [0,1,2,3,4]
 legendStrs = ['PC'+str(e+1) for e in pcs]
 c = ['r','g','b']
 bw = .2
 r = np.arange(1,M+1)
 for i in pcs:    
     plt.bar(r+i*bw, V[:,i], width=bw)
-plt.xticks(r+bw, attributeNames)
+plt.xticks(r+bw, attributeNames, rotation = 45)
 plt.xlabel('Attributes')
 plt.ylabel('Component coefficients')
 plt.legend(legendStrs)
@@ -119,7 +128,7 @@ all_water_data = Y[y==4,:]
 ## exercise 2.1.6
 r = np.arange(1,X.shape[1]+1)
 plt.bar(r, np.std(X,0))
-plt.xticks(r, attributeNames)
+plt.xticks(r, attributeNames, rotation = 45)
 plt.ylabel('Standard deviation')
 plt.xlabel('Attributes')
 plt.title('NanoNose: attribute standard deviations')

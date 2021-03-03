@@ -43,7 +43,7 @@ X = np.empty((395,7))
 for i in range(7):
     X[:,i] = np.array(doc.col_values(i,1,396)).T
 
-for row in X:
+"""for row in X:
     if row[col] <7:
         row[col] = 0
     elif row[col] < 12:
@@ -51,7 +51,7 @@ for row in X:
     elif row[col] < 18:
         row[col] = 2
     else:
-        row[col] = 3
+        row[col] = 3"""
     
 
 # Compute values of N, M and C.
