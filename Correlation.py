@@ -41,15 +41,21 @@ legend(classNames)
 savefig("CorrelationAll.png")
 show()
 
-for c in range(C):
-    class_mask = (y==c)
-    collected_mask = []
-    for boo in class_mask:
-        collected_mask.append(True)
-    plot(np.array(Xcopy[class_mask,6]), np.array(Xcopy[class_mask,5]), '.')
+plts = [[6, 5], [4, 5]]
+names = [["G3", "maxEdu"], ["", "Absence"]]
 
-ylabel("G3")
-xlabel("maxEdu, Correlation: %.4f" % np.corrcoef(np.array(X[collected_mask,6]), np.array(X[collected_mask,5]))[0,1])
+for p in range(len(plts)):
+    subplot(1, 2, p+1)
+    for c in range(C):
+        class_mask = (y==c)
+        collected_mask = []
+        for boo in class_mask:
+            collected_mask.append(True)
+        plot(np.array(Xcopy[class_mask,plts[p][0]]), np.array(Xcopy[class_mask,plts[p][1]]), '.')
+
+        ylabel(names[p][0])
+        xlabel(names[p][1] + ", Correlation: %.4f" % np.corrcoef(np.array(X[collected_mask,plts[p][0]]), np.array(X[collected_mask,plts[p][1]]))[0,1])
+    
 legend(classNames)
 savefig("maxEdu,AbsenceForG3.png")
 show()
