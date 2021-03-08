@@ -15,6 +15,17 @@ from scipy.linalg import svd
 from scipy.stats import zscore
 
 
+#remove G3 start
+X2 = np.empty((395,6))
+for r in range(len(X)):
+    X2[r] = np.hstack((X[r][:5], X[r][6:]))
+
+X = X2
+
+attributeNames = attributeNames[:5] + attributeNames[6:]
+
+#Remove G3 end
+
 # Subtract mean value from data
 Y = X - np.ones((N,1))*X.mean(axis=0)
 
@@ -24,7 +35,7 @@ U,S,V = svd(Y,full_matrices=False)
 # Compute variance explained by principal components
 rho = (S*S) / (S*S).sum() 
 
-threshold = 0.95
+threshold = 0.90
 
 # Plot variance explained
 plt.figure()
@@ -94,7 +105,36 @@ plt.xlabel('Attributes')
 plt.ylabel('Component coefficients')
 plt.legend(legendStrs)
 plt.grid()
-plt.title('NanoNose: PCA Component Coefficients')
+plt.title('Zero-mean and unit variance\nPCA Component Coefficients')
+plt.show()
+
+Y = X - np.ones((N, 1))*X.mean(0)
+# Here were utilizing the broadcasting of a row vector to fit the dimensions 
+# of Y2
+
+# Store the two in a cell, so we can just loop over them:
+
+#Y = X - np.ones((N,1))*X.mean(0)
+
+U,S,Vh = svd(Y,full_matrices=False)
+V=Vh.T
+N,M = X.shape
+
+# We saw in 2.1.3 that the first 3 components explaiend more than 90
+# percent of the variance. Let's look at their coefficients:
+pcs = [0,1]
+legendStrs = ['PC'+str(e+1) for e in pcs]
+c = ['r','g','b']
+bw = .2
+r = np.arange(1,M+1)
+for i in pcs:    
+    plt.bar(r+i*bw, V[:,i], width=bw)
+plt.xticks(r+bw, attributeNames, rotation = 45)
+plt.xlabel('Attributes')
+plt.ylabel('Component coefficients')
+plt.legend(legendStrs)
+plt.grid()
+plt.title('Zero-mean\nPCA Component Coefficients')
 plt.show()
 
 # Inspecting the plot, we see that the 2nd principal component has large
@@ -179,17 +219,6 @@ for k in range(2):
     
     # Compute the projection onto the principal components
     Z = U*S;
-    
-    # Plot projection
-    plt.subplot(nrows, ncols, 1+k)
-    C = len(classNames)
-    for c in range(C):
-        plt.plot(Z[y==c,i], Z[y==c,j], '.', alpha=.5)
-    plt.xlabel('PC'+str(i+1))
-    plt.xlabel('PC'+str(j+1))
-    plt.title(titles[k] + '\n' + 'Projection' )
-    plt.legend(classNames)
-    plt.axis('equal')
     
     # Plot attribute coefficients in principal component space
     plt.subplot(nrows, ncols,  3+k)
