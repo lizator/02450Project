@@ -2,7 +2,7 @@ import numpy as np
 import xlrd
 
 # load doc
-doc = xlrd.open_workbook('./student-mat.xlsx').sheet_by_index(0)
+doc = xlrd.open_workbook('./student-mat.xls').sheet_by_index(0)
 
 # Extract attribute names
 attributeNames = doc.row_values(rowx=0, start_colx=0, end_colx=7)
