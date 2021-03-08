@@ -249,4 +249,45 @@ for k in range(2):
 
 plt.show()
         
+
+
+
+Y = X - np.ones((N,1))*X.mean(axis=0)
+Y = Y*(1/np.std(Y,0))
+
+V = V.T    
+
+# Project the centered data onto principal component space
+Z = Y @ V
+
+n = 4
+m = 4
+# Plot PCA of the data
+
+f = figure(figsize=(18,12))
+title('NanoNose data: PCA')
+
+for i in range(n):
+    for j in range(m):
+        plt.subplot(n, m, i*m+j+1)
+        
+        #Z = array(Z)
+        for c in range(C):
+            # select indices belonging to class c:
+            class_mask = y==c
+            plot(Z[class_mask,i], Z[class_mask,j], 'o', alpha=.5)
+        if j == 0:
+            plt.ylabel('PC{0}'.format(i+1))
+        else:
+            plt.yticks([])
+        if i == n-1:
+            plt.xlabel('PC{0}'.format(j+1))
+        else:
+            plt.xticks([])
+        
+        if i == 0 and j == 0:
+            legend(classNames)
+
+# Output result to screen
+plt.show()
          
