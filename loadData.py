@@ -34,14 +34,10 @@ while index != len(Female): #Removing all instances where g3 is 0
 
 lg3=[]
 for index in g3:
-    if index <7:
+    if index <10:
         lg3.append(0)
-    elif index < 12:
-        lg3.append(1)
-    elif index < 18:
-        lg3.append(2)
     else:
-        lg3.append(3)
+        lg3.append(1)
 
 collected = [Female, Male, Age, study, absence, lg3, maxEdu]
 yrow = collected[col]   # what column is used for grouping
