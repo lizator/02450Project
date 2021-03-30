@@ -14,6 +14,16 @@ from matplotlib.pyplot import figure, plot, title, xlabel, ylabel, show, legend
 from scipy.linalg import svd
 from scipy.stats import zscore
 
+#remove G3 start
+X2 = np.empty((357,6))
+for r in range(len(X)):
+    X2[r] = np.hstack((X[r][:5], X[r][6:]))
+
+X = X2
+
+attributeNames = attributeNames[:5] + attributeNames[6:]
+
+#Remove G3 end
 
 #remove G3 start
 X2 = np.empty((395,6))
@@ -105,7 +115,7 @@ plt.xlabel('Attributes')
 plt.ylabel('Component coefficients')
 plt.legend(legendStrs)
 plt.grid()
-plt.title('Zero-mean and unit variance\nPCA Component Coefficients')
+plt.title('Zero-mean\nPCA Component Coefficients')
 plt.show()
 
 Y = X - np.ones((N, 1))*X.mean(0)
@@ -134,7 +144,7 @@ plt.xlabel('Attributes')
 plt.ylabel('Component coefficients')
 plt.legend(legendStrs)
 plt.grid()
-plt.title('Zero-mean\nPCA Component Coefficients')
+plt.title('Zero-mean and unit variance\nPCA Component Coefficients')
 plt.show()
 
 # Inspecting the plot, we see that the 2nd principal component has large
@@ -250,4 +260,45 @@ for k in range(2):
 
 plt.show()
         
+
+
+
+Y = X - np.ones((N,1))*X.mean(axis=0)
+Y = Y*(1/np.std(Y,0))
+
+V = V.T    
+
+# Project the centered data onto principal component space
+Z = Y @ V
+
+n = 4
+m = 4
+# Plot PCA of the data
+
+f = figure(figsize=(18,12))
+title('NanoNose data: PCA')
+
+for i in range(n):
+    for j in range(m):
+        plt.subplot(n, m, i*m+j+1)
+        
+        #Z = array(Z)
+        for c in range(C):
+            # select indices belonging to class c:
+            class_mask = y==c
+            plot(Z[class_mask,i], Z[class_mask,j], 'o', alpha=.5)
+        if j == 0:
+            plt.ylabel('PC{0}'.format(i+1))
+        else:
+            plt.yticks([])
+        if i == n-1:
+            plt.xlabel('PC{0}'.format(j+1))
+        else:
+            plt.xticks([])
+        
+        if i == 0 and j == 0:
+            legend(classNames)
+
+# Output result to screen
+plt.show()
          

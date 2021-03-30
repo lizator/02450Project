@@ -1,4 +1,4 @@
-# used from Exercise 4.2.5
+# example from Exercise 4.2.5
 
 from matplotlib.pyplot import (figure, subplot, plot, xlabel, ylabel, 
                                xticks, yticks,legend,show, savefig)
@@ -41,6 +41,7 @@ legend(classNames)
 savefig("CorrelationAll.png")
 show()
 
+
 plts = [[6, 5], [4, 5]]
 names = [["G3", "maxEdu"], ["", "Absence"]]
 
@@ -57,5 +58,6 @@ for p in range(len(plts)):
         xlabel(names[p][1] + ", Correlation: %.4f" % np.corrcoef(np.array(X[collected_mask,plts[p][0]]), np.array(X[collected_mask,plts[p][1]]))[0,1])
     
 legend(classNames)
-savefig("maxEdu,AbsenceForG3.png")
+savefig("maxEdu,AbsenceForG3_0sGone")
 show()
+
