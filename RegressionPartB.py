@@ -2,6 +2,11 @@ import torch
 from sklearn import model_selection
 from toolbox_02450 import rlr_validate, train_neural_net
 from tabulate import tabulate
+import time
+#todo fejlbeskeder ved programstart
+#todo hvad er resultatet af 2 layer? Performance af den bedste model?
+
+start_time = time.time()
 
 #Load data
 from loadData import *
@@ -14,8 +19,8 @@ X = np.delete(X, 5, 1)
 M = M-1
 
 # Create crossvalidation partition for evaluation
-K1 = 5
-K2 = 5
+K1 = 10
+K2 = 10
 CV_outer = model_selection.KFold(n_splits=K1, shuffle=True)
 CV_inner = model_selection.KFold(n_splits=K2, shuffle=True)
 
@@ -31,9 +36,9 @@ sigma = np.empty((K1, M))
 w_rlr = np.empty((M+1, K1))
 opt_lambdas_rlr = np.empty((K1, 1))
 
-n_replicates = 1 # number of networks trained in each k-fold
+n_replicates = 3 # number of networks trained in each k-fold
 n_hidden_units = [1,3,5,10,20] # number of hidden units in the single hidden layer
-max_iter = 3000 # Train for a maximum of 10000 steps, or until convergence (see help for the
+max_iter = 10000 # Train for a maximum of 10000 steps, or until convergence (see help for the
 loss_fn = torch.nn.MSELoss() # notice how this is now a mean-squared-error loss
 opt_hidden_units = np.empty((K1, 1))
 
@@ -159,7 +164,7 @@ for train_index, test_index in CV_outer.split(X):
     k += 1
 
 output_data = np.hstack((
-    np.arange(K1).reshape(2,1)+1,
+    np.arange(K1).reshape(K1,1)+1,
     opt_hidden_units,
     Error_test_ANN,
     opt_lambdas_rlr,
@@ -170,3 +175,5 @@ output_data = np.hstack((
 print(tabulate(
     output_data,
     headers=['i','ann_h','ann_err','lr_lambda','lr_err','base_err']))
+
+print("\n--- %s seconds ---" % (time.time() - start_time))
