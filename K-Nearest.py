@@ -67,7 +67,7 @@ for par_index, verification_index in CV_outer.split(X, y):
         
     # Plot the classification error rate
     figure()
-    plot(100*sum(errors,0)/N)
+    plot(range(1,L+1),100*sum(errors,0)/N)
     xlabel('Number of neighbors, Fold {0}'.format(len(folds)+1))
     ylabel('Classification error rate (%)')
     show()
