@@ -17,8 +17,8 @@ L=30
 K=10
 
 # Inner folds
-useLeaveOneOut = False
-K2=200
+useLeaveOneOut = True
+K2=10
 
 
 # Script running
