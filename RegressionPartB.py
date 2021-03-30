@@ -1,6 +1,7 @@
 import torch
 from sklearn import model_selection
 from toolbox_02450 import rlr_validate, train_neural_net
+from tabulate import tabulate
 
 #Load data
 from loadData import *
@@ -31,9 +32,10 @@ w_rlr = np.empty((M+1, K1))
 opt_lambdas_rlr = np.empty((K1, 1))
 
 n_replicates = 1 # number of networks trained in each k-fold
-n_hidden_units = [1, 2, 5] # number of hidden units in the single hidden layer
-max_iter = 10000 # Train for a maximum of 10000 steps, or until convergence (see help for the
+n_hidden_units = [1,3,5,10,20] # number of hidden units in the single hidden layer
+max_iter = 3000 # Train for a maximum of 10000 steps, or until convergence (see help for the
 loss_fn = torch.nn.MSELoss() # notice how this is now a mean-squared-error loss
+opt_hidden_units = np.empty((K1, 1))
 
 k = 0
 for train_index, test_index in CV_outer.split(X):
@@ -76,7 +78,7 @@ for train_index, test_index in CV_outer.split(X):
     XtX = X_train_reg.T @ X_train_reg
 
     lambdaI = opt_lambda * np.eye(M+1)
-    lambdaI[0, 0] = 0  # Do no regularize the bias term
+    lambdaI[0, 0] = 0  # Do not regularize the bias term
     w_rlr[:, k] = np.linalg.solve(XtX + lambdaI, Xty).squeeze()
 
     # Compute mean squared error with regularization with optimal lambda
@@ -88,7 +90,8 @@ for train_index, test_index in CV_outer.split(X):
     errors = np.zeros((len(n_hidden_units), K2))  # make a list for storing generalizaition error for each model
 
     # Inner loop (K2)
-    for (k, (train_index_ann, test_index_ann)) in enumerate(CV_inner.split(X_train, y_train)):
+    i = 0
+    for train_index_ann, test_index_ann in CV_inner.split(X_train):
 
         X_train_ann = torch.Tensor(X_train[train_index_ann, :])
         y_train_ann = torch.Tensor(y_train[train_index_ann])
@@ -97,17 +100,17 @@ for train_index, test_index in CV_outer.split(X):
 
         # Model loop
         j = 0
-        for i in n_hidden_units:
+        for n in n_hidden_units:
 
-            model = lambda: torch.nn.Sequential(
-                torch.nn.Linear(M, i),  # M features to n_hidden_units
+            inner_model = lambda: torch.nn.Sequential(
+                torch.nn.Linear(M, n),  # M features to n_hidden_units
                 torch.nn.Tanh(),  # 1st transfer function, //todo kan ikke fjerne dette .. ?
-                torch.nn.Linear(i, 1),  # n_hidden_units to 1 output neuron
+                torch.nn.Linear(n, 1),  # n_hidden_units to 1 output neuron
                 # no final tranfer function, i.e. "linear output"
             )
 
             # Train the net on training data
-            net, final_loss, learning_curve = train_neural_net(model,
+            net, final_loss, learning_curve = train_neural_net(inner_model,
                                                                loss_fn,
                                                                X=X_train_ann,
                                                                y=y_train_ann,
@@ -117,36 +120,53 @@ for train_index, test_index in CV_outer.split(X):
             # Determine estimated class labels for test set
             y_test_est_ann = net(X_test_ann)
 
-            # Determine errors and errors
+            # Determine errors
             se = (y_test_est_ann.float() - y_test_ann.float()) ** 2  # squared error
             mse = (sum(se).type(torch.float) / len(y_test_ann)).data.numpy().mean()  # mean
-            errors[j][k] = mse
+            errors[j][i] = mse
 
             j += 1
+        i += 1
 
+    # Save the best beforming number of hidden units from the inner loop
+    opt_hidden_units[k] = n_hidden_units[np.argmin(np.mean(errors, axis=1))]
+    opt_hidden_unit = opt_hidden_units[k][0].astype(int)
 
+    # Compute error for best performing model for the outer loop
+    outer_model = lambda: torch.nn.Sequential(
+        torch.nn.Linear(M, opt_hidden_unit),  # M features to n_hidden_units
+        torch.nn.Tanh(),  # 1st transfer function, //todo kan ikke fjerne dette .. ?
+        torch.nn.Linear(opt_hidden_unit, 1),  # n_hidden_units to 1 output neuron
+        # no final tranfer function, i.e. "linear output"
+    )
 
+    # Train the net on training data
+    net, final_loss, learning_curve = train_neural_net(outer_model,
+                                                       loss_fn,
+                                                       X=torch.Tensor(X_train),
+                                                       y=torch.Tensor(y_train),
+                                                       n_replicates=n_replicates,
+                                                       max_iter=max_iter)
 
+    # Determine estimated class labels for test set
+    y_test_est = net(torch.Tensor(X_test))
 
-
-
-
-    # 10-fold cross validate ANN to find optimal parameters (inner loop)
-    # Test optimal model on X/Y_test
-    # Save result
+    # Determine errors
+    se = (y_test_est.float() - torch.Tensor(y_test).float()) ** 2  # squared error
+    mse = (sum(se).type(torch.float) / len(torch.Tensor(y_test))).data.numpy().mean()  # mean
+    Error_test_ANN[k] = mse
 
     k += 1
 
-for i in range(K1):
-    print(Error_test_baseline[i])
+output_data = np.hstack((
+    np.arange(K1).reshape(2,1)+1,
+    opt_hidden_units,
+    Error_test_ANN,
+    opt_lambdas_rlr,
+    Error_test_linear_regression,
+    Error_test_baseline
+))
 
-
-print("\nLinReg")
-
-for i in range(K1):
-    print(Error_test_linear_regression[i])
-
-
-# E_{gen} som gennemsnittet over alle K1 loops
-# Print results
-
+print(tabulate(
+    output_data,
+    headers=['i','ann_h','ann_err','lr_lambda','lr_err','base_err']))
