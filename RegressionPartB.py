@@ -2,9 +2,8 @@ import torch
 from sklearn import model_selection
 from toolbox_02450 import rlr_validate, train_neural_net
 from tabulate import tabulate
+from numpy import savetxt
 import time
-#todo fejlbeskeder ved programstart
-#todo hvad er resultatet af 2 layer? Performance af den bedste model?
 
 start_time = time.time()
 
@@ -28,9 +27,12 @@ CV_inner = model_selection.KFold(n_splits=K2, shuffle=True)
 lambdas = np.power(10.,range(-5,9))
 
 # Initialize variables
-Error_test_baseline = np.empty((K1, 1))
-Error_test_linear_regression = np.empty((K1, 1))
-Error_test_ANN = np.empty((K1, 1))
+Error_test_baseline_avg = np.empty((K1, 1))
+Error_test_baseline = np.zeros(X.shape[0])
+Error_test_linear_regression_avg = np.empty((K1, 1))
+Error_test_linear_regression = np.zeros(X.shape[0])
+Error_test_ANN_avg = np.empty((K1, 1))
+Error_test_ANN = np.zeros(X.shape[0])
 mu = np.empty((K1, M))
 sigma = np.empty((K1, M))
 w_rlr = np.empty((M+1, K1))
@@ -55,7 +57,8 @@ for train_index, test_index in CV_outer.split(X):
     ### BASELINE ###
     # Baseline does not need any optimization and can be evaluated directed on X/Y_test
     baselinePrediction = y_train.mean()
-    Error_test_baseline[k] = np.square(y_test-baselinePrediction).sum(axis=0)/y_test.shape[0]
+    Error_test_baseline_avg[k] = np.square(y_test - baselinePrediction).sum(axis=0) / y_test.shape[0]
+    Error_test_baseline[test_index] = np.square(y_test - baselinePrediction)
 
 
     ### LINEAR REGRESSION ###
@@ -87,7 +90,8 @@ for train_index, test_index in CV_outer.split(X):
     w_rlr[:, k] = np.linalg.solve(XtX + lambdaI, Xty).squeeze()
 
     # Compute mean squared error with regularization with optimal lambda
-    Error_test_linear_regression[k] = np.square(y_test - X_test_reg @ w_rlr[:, k]).sum(axis=0) / y_test.shape[0]
+    Error_test_linear_regression_avg[k] = np.square(y_test - X_test_reg @ w_rlr[:, k]).sum(axis=0) / y_test.shape[0]
+    Error_test_linear_regression[test_index] = np.square(y_test - X_test_reg @ w_rlr[:, k])
 
 
     ### ARTIFICIAL NEURAL NETWORK ###
@@ -159,17 +163,19 @@ for train_index, test_index in CV_outer.split(X):
     # Determine errors
     se = (y_test_est.float() - torch.Tensor(y_test).float()) ** 2  # squared error
     mse = (sum(se).type(torch.float) / len(torch.Tensor(y_test))).data.numpy().mean()  # mean
-    Error_test_ANN[k] = mse
+    Error_test_ANN_avg[k] = mse
+    Error_test_ANN[test_index] = np.square(y_test_est.float().data.numpy()[:,0] - torch.Tensor(y_test).float().data.numpy())
 
     k += 1
 
+# Output data in required format
 output_data = np.hstack((
-    np.arange(K1).reshape(K1,1)+1,
+    np.arange(K1).reshape(K1,1) + 1,
     opt_hidden_units,
-    Error_test_ANN,
+    Error_test_ANN_avg,
     opt_lambdas_rlr,
-    Error_test_linear_regression,
-    Error_test_baseline
+    Error_test_linear_regression_avg,
+    Error_test_baseline_avg
 ))
 
 print(tabulate(
@@ -177,3 +183,8 @@ print(tabulate(
     headers=['i','ann_h','ann_err','lr_lambda','lr_err','base_err']))
 
 print("\n--- %s seconds ---" % (time.time() - start_time))
+
+# Export for statistical comparison of models in R
+savetxt('Error_ANN.csv', Error_test_ANN, delimiter=',')
+savetxt('Error_baseline.csv', Error_test_baseline, delimiter=',')
+savetxt('Error_linear_regression.csv', Error_test_linear_regression, delimiter=',')
