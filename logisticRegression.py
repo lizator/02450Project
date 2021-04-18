@@ -36,3 +36,4 @@ show()
 
 print(model.coef_[0])
 print(attributeNames)
+print("Offset: {0:.4f}".format(model.intercept_[0]))
