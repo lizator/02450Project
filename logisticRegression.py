@@ -3,6 +3,13 @@ from matplotlib.pylab import figure, plot, xlabel, ylabel, legend, ylim, show
 from loadData import *
 from rmG3 import *
 
+for i in range(len(y)):
+    if y[i] < 10:
+        y[i] = 0
+    else:
+        y[i] = 1
+
+
 model = lm.LogisticRegression(C=1/10)
 model = model.fit(X,y)
 

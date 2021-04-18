@@ -13,6 +13,13 @@ import pickle
 # loading data and removing G3
 #from loadData import *
 from rmG3 import *
+
+for i in range(len(y)):
+    if y[i] < 10:
+        y[i] = 0
+    else:
+        y[i] = 1
+
 """
 mat_data = loadmat('../../02450Toolbox_Python/Data/wine2.mat')
 X = mat_data['X']
