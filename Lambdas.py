@@ -18,12 +18,11 @@ from rmG3 import *
 
 #X = X - np.ones((N, 1))*X.mean(0)
 #X = X*(1/np.std(X,0))
-X = np.delete(X, 5, 1)
+
 M = M-1
 # Add offset attribute
 X = np.concatenate((np.ones((X.shape[0],1)),X),1)
 attributeNames = [u'Offset']+attributeNames
-attributeNames.remove("G3")
 M = M+1
 
 ## Crossvalidation
