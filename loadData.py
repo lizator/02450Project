@@ -39,7 +39,7 @@ for index in g3:
     else:
         lg3.append(1)
 
-collected = [Female, Male, Age, study, absence, lg3, maxEdu]
+collected = [Female, Male, Age, study, absence, g3, maxEdu]
 yrow = collected[col]   # what column is used for grouping
 classNames = sorted(set(yrow))
 classDict = dict(zip(classNames,range(len(classNames))))
