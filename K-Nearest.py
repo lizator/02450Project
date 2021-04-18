@@ -20,6 +20,8 @@ for i in range(len(y)):
     else:
         y[i] = 1
 
+C=2
+
 """
 mat_data = loadmat('../../02450Toolbox_Python/Data/wine2.mat')
 X = mat_data['X']

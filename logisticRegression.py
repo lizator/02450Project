@@ -9,6 +9,7 @@ for i in range(len(y)):
     else:
         y[i] = 1
 
+C=2
 
 model = lm.LogisticRegression(C=1/10)
 model = model.fit(X,y)
