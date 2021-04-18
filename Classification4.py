@@ -17,6 +17,11 @@ pickle_a.close()
 pickle_b.close()
 pickle_c.close()
 
+for i in range(len(y)):
+    if y[i] < 10:
+        y[i] = 0
+    else:
+        y[i] = 1
 
 # Compute the mcnemar's interval
 alpha = 0.05
