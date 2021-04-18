@@ -4,7 +4,7 @@
 
 import numpy as np
 from loadData import *
-
+M = M - 1
 X = np.hstack((X[:,:5], X[:,6:]))
 
 attributeNames.pop(5)

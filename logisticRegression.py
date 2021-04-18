@@ -3,7 +3,7 @@ from matplotlib.pylab import figure, plot, xlabel, ylabel, legend, ylim, show
 from loadData import *
 from rmG3 import *
 
-model = lm.LogisticRegression(penalty='l2', C=1/10)
+model = lm.LogisticRegression(C=1/10)
 model = model.fit(X,y)
 
 # Classify wine as White/Red (0/1) and assess probabilities
